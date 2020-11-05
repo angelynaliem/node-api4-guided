@@ -20,13 +20,33 @@ router.get("/shouts", (req, res, next) => {
     .catch(error => next(error));
 });
 
-router.post("/shouts", (req, res, next) => {
-  Shouts.add(req.body)
-    .then(shout => {
-      res.status(201).json(shout);
-    })
-    .catch(error => next(error));
-});
+router.get("/shouts", async (req, res, next) => {
+
+  try {
+    const shouts = await Shouts.find()
+    res.status(200).json(shouts)
+  } catch (error) {
+    error => next(error)
+  }
+})
+
+// router.post("/shouts", (req, res, next) => {
+//   Shouts.add(req.body)
+//     .then(shout => {
+//       res.status(201).json(shout);
+//     })
+//     .catch(error => next(error));
+// });
+
+router.post("/shouts", async (req, res, next) => {
+
+  try {
+    const shouts = await Shouts.add(req.body)
+    res.status(201).json(shouts)
+  } catch (error) {
+    error => next(error)
+  }
+})
 
 router.delete("/shouts/:id", (req, res) => {
   Shouts.remove(req.params.id)

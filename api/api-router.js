@@ -12,7 +12,7 @@ const motd = process.env.MOTD || "hello world"
   res.status(200).json({ api: "up", motd: motd });
 });
 
-router.get("/shouts", (req, res, next) => {
+router.get("/shouts", challenge, (req, res, next) => {
   Shouts.find()
     .then(shouts => {
       res.status(200).json(shouts);
@@ -20,15 +20,15 @@ router.get("/shouts", (req, res, next) => {
     .catch(error => next(error));
 });
 
-router.get("/shouts", async (req, res, next) => {
+// router.get("/shouts", async (req, res, next) => {
 
-  try {
-    const shouts = await Shouts.find()
-    res.status(200).json(shouts)
-  } catch (error) {
-    error => next(error)
-  }
-})
+//   try {
+//     const shouts = await Shouts.find()
+//     res.status(200).json(shouts)
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 // router.post("/shouts", (req, res, next) => {
 //   Shouts.add(req.body)
@@ -44,7 +44,7 @@ router.post("/shouts", async (req, res, next) => {
     const shouts = await Shouts.add(req.body)
     res.status(201).json(shouts)
   } catch (error) {
-    error => next(error)
+    next(error)
   }
 })
 
@@ -67,6 +67,21 @@ function errorHandler(error, req, res, next) {
   // like saving it to a database, sending a mail to the admin
   // or using an external logging service
   res.status(500).json(error.message);
+}
+
+
+
+
+function challenge (req, res, next) {
+  let today = new Date();
+let time = today.getSeconds();
+console.log("Time:", time)
+
+  if(time % 2  === 1) {
+    res.status(403).send({ message: "Balance..." })
+  } else {
+    next()
+  }
 }
 
 module.exports = router;
